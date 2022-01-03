@@ -31,10 +31,7 @@ const createCart = async function (req, res) {
         }
         // do authorisation here
 
-        if (!validator.isValidObjectId(ObjectId(userIdFromToken))) {
-            return res.status(400).send({ status: false, message: `${userIdFromToken} Unauthorized access! Owner info doesn't match ` })
-        }
-
+        
 
         let isUserIdExists = await userModel.findOne({ _id: userId })
        
@@ -141,9 +138,7 @@ const updateCart = async function (req, res) {
             return res.status(400).send({ status: false, message: "Invalid userId in body" })
         }
 
-        if (!validator.isValidObjectId(ObjectId(userIdFromToken))) {
-            return res.status(400).send({ status: false, message: `${userIdFromToken} Unauthorized access! Owner info doesn't match ` })
-        }
+        
 
         let user = await userModel.findOne({ _id: userId })
         if (!user) {
@@ -206,7 +201,7 @@ const updateCart = async function (req, res) {
             let quantity = cart.totalItems - 1
             let data = await cartModel.findOneAndUpdate({ _id: cartId }, { $set: { totalPrice: totalAmount, totalItems: quantity } }, { new: true })   //update the cart with total items and totalprice
 
-            return res.status(201).send({ status: true, message: `${productId} is been removed`, data: data })
+            return res.status(200).send({ status: true, message: `${productId} is been removed`, data: data })
 
         }
 
@@ -228,7 +223,7 @@ const updateCart = async function (req, res) {
 
         let data = await cartModel.findOneAndUpdate({ _id: cartId }, { items: arr, totalPrice: totalAmount }, { new: true })
 
-        return res.status(201).send({ status: true, message: `${productId} quantity is been reduced By 1`, data: data })
+        return res.status(200).send({ status: true, message: `${productId} quantity is been reduced By 1`, data: data })
     }
     catch (error) {
         console.log(error)
@@ -252,9 +247,7 @@ const getCartByUserId = async function (req, res) {
         if (!validator.isValidObjectId(userId)) {
             return res.status(400).send({ status: false, message: "Invalid request parameters. userId is not valid" });
         }
-        if (!validator.isValidObjectId(ObjectId(userIdFromToken))) {
-            return res.status(400).send({ status: false, message: `${userIdFromToken} Unauthorized access! Owner info doesn't match ` })
-        }
+       
         let usercartid = await cartModel.findOne({ userId: userId });
         if (!usercartid) {
             return res.status(400).send({ status: false, msg: "No such user found. Please register and try again" });
@@ -285,9 +278,7 @@ const deleteCartByUserId = async function (req, res) {
         if (!validator.isValidObjectId(userId)) {
             return res.status(400).send({ status: false, message: "Invalid request parameters. userId is not valid" });
         }
-        if (!validator.isValidObjectId(ObjectId(userIdFromToken))) {
-            return res.status(400).send({ status: false, message: `${userIdFromToken} Unauthorized access! Owner info doesn't match ` })
-        }
+       
         let Userdata = await userModel.findOne({ _id: userId })
         if (!Userdata) {
             return res.status(400).send({ status: false, msg: "No such user exists with this userID" });
@@ -301,7 +292,7 @@ const deleteCartByUserId = async function (req, res) {
             return res.status(400).send({ status: false, msg: "No such user found. Please register and try again" });
         }
         let updatedUserCart = await cartModel.findOneAndUpdate({ userId: userId }, { items: [], totalPrice: 0, totalItems: 0 }, { new: true })
-        return res.status(200).send({ status: true, message: "All Products from Carts are Deleted", UserCart: updatedUserCart })
+        return res.status(204).send({ status: true})
     }
     catch (error) {
         console.log(error)

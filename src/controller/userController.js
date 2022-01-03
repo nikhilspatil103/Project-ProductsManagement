@@ -226,10 +226,7 @@ const getProfile = async function (req, res) {
             return res.status(400).send({ status: false, message: `${userId} is not a valid user id or not present ` })
 
         }
-        if (!validator.isValidObjectId(ObjectId(userIdFromToken))) {
-            return res.status(400).send({ status: false, message: `${userIdFromToken} Unauthorized access! Owner info doesn't match ` })
-        }
-
+        
         //validation ends
         const findUser = await userModel.findOne({ _id: userId })
         if (!findUser) {
@@ -272,9 +269,7 @@ const updateUser = async function (req, res) {
             return
         }
 
-        if (!validator.isValidObjectId(ObjectId(userIdFromToken))) {
-            return res.status(400).send({ status: false, message: `${userIdFromToken} Unauthorized access! Owner info doesn't match ` })
-        }
+      
 
 
 
@@ -481,7 +476,7 @@ const updateUser = async function (req, res) {
         )
 
 
-        res.status(201).send({ status: true, data: updatedBookData })
+        res.status(200).send({ status: true, data: updatedBookData })
 
 
     } catch (err) {

@@ -98,9 +98,17 @@ const createProduct = async function (req, res) {
                 return res.status(400).send({ status: false, message: `availableSizes should be among ${["S", "XS", "M", "X", "L", "XXL", "XL"].join(', ')}` })
             }
 
-            if (Array.isArray(arr)) {
-                productData['availableSizes'] = arr
+            function onlyUnique(value, index, self){
+                return self.indexOf(value) === index  //value = "M" true  
+
             }
+            let unique = arr.filter(onlyUnique)  //["M", "S"]
+            if (Array.isArray(arr)) {
+                if (!productData.hasOwnProperty['availableSizes']) {
+                    productData['availableSizes'] = unique
+                }
+            }
+
         }
         //----------------Validation Ends-------------------------------------//
 
@@ -308,9 +316,15 @@ const updateProduct = async function (req, res) {
             }
             let data = await productModel.findOne({ _id: productId }).select({ availableSizes: 1 })
             let sizes = data.availableSizes
+            let newArr = [...arr, ...sizes] //["M", "M","S"] === self
+            function onlyUnique(value, index, self){
+                return self.indexOf(value) === index  //value = "M" true  
+
+            }
+            let unique = newArr.filter(onlyUnique)  //["M", "S"]
             if (Array.isArray(arr)) {
                 if (!updatedProductData.hasOwnProperty['availableSizes']) {
-                    updatedProductData['availableSizes'] = [...arr, ...sizes]
+                    updatedProductData['availableSizes'] = unique
                 }
             }
         }

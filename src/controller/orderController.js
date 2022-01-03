@@ -22,9 +22,7 @@ const createOrder = async function (req, res) {
         if (!validator.isValidObjectId(userId)) {
             return res.status(400).send({ status: false, message: "Invalid request parameters. userId is not valid" });
         }
-        if (!validator.isValidObjectId(ObjectId(userIdFromToken))) {
-            return res.status(400).send({ status: false, message: `${userIdFromToken} Unauthorized access! Owner info doesn't match ` })
-        }
+       
 
         let usercartid = await userModel.findOne({ _id: userId });
         if (!usercartid) {
@@ -70,7 +68,7 @@ const createOrder = async function (req, res) {
 
         await cartModel.findOneAndUpdate({ userId: userId }, { items: [], totalPrice: 0, totalItems: 0 })
 
-        res.status(201).send({ status: true, msg: 'order created successfully', data: orders })
+        res.status(200).send({ status: true, msg: 'order created successfully', data: orders })
 
     } catch (err) {
         res.status(500).send({ status: false, msg: err.message })
@@ -91,9 +89,7 @@ const updateOrder = async function (req, res) {
             return res.status(400).send({ status: false, message: "Invalid request parameters. userId is not valid" });
         }
 
-        if (!validator.isValidObjectId(ObjectId(userIdFromToken))) {
-            return res.status(400).send({ status: false, message: `${userIdFromToken} Unauthorized access! Owner info doesn't match ` })
-        }
+       
 
         let usercartid = await userModel.findOne({ _id: userId });
         if (!usercartid) {
@@ -140,11 +136,11 @@ const updateOrder = async function (req, res) {
             if (orderCartid.status === 'pending') {
                 if (status === 'completed') {
                     let updatedOrder = await orderModel.findOneAndUpdate({ orderId: orderId }, { status: 'completed' }, { new: true })
-                    return res.status(400).send({ status: false, msg: 'order status completed ', data: updatedOrder })
+                    return res.status(200).send({ status: true, msg: 'order status completed ', data: updatedOrder })
                 }
                 if (status === 'cancelled') {
                     let updatedOrder = await orderModel.findOneAndUpdate({ orderId: orderId }, { status: 'cancelled' }, { new: true })
-                    return res.status(400).send({ status: false, msg: 'order status cancelled', data: updatedOrder })
+                    return res.status(200).send({ status: true, msg: 'order status cancelled', data: updatedOrder })
                 }
 
             }
@@ -166,7 +162,7 @@ const updateOrder = async function (req, res) {
             if (orderCartid.status === 'pending') {
                 if (status = 'completed') {
                     let updatedOrder = await orderModel.findOneAndUpdate({ orderId: orderId }, { status: 'completed' }, { new: true })
-                    return res.status(400).send({ status: false, msg: 'order status completed ', data: updatedOrder })
+                    return res.status(200).send({ status: true, msg: 'order status completed ', data: updatedOrder })
                 }
             }
 
