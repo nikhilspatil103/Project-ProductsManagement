@@ -247,12 +247,15 @@ const getCartByUserId = async function (req, res) {
         if (!validator.isValidObjectId(userId)) {
             return res.status(400).send({ status: false, message: "Invalid request parameters. userId is not valid" });
         }
-       
-        let usercartid = await cartModel.findOne({ userId: userId });
-        if (!usercartid) {
+        let user= await userModel.findOne({_id:userId})
+        if (!user) {
             return res.status(400).send({ status: false, msg: "No such user found. Please register and try again" });
         }
-        if (usercartid._id.toString() !== userIdFromToken) {
+        let usercartid = await cartModel.findOne({ userId: userId });
+        if (!usercartid) {
+            return res.status(400).send({ status: false, msg: "No such cart found. Please register and try again" });
+        }
+        if (user._id.toString() !== userIdFromToken) {
             res.status(401).send({ status: false, message: `Unauthorized access! Owner info doesn't match` });
             return
         }

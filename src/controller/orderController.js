@@ -44,7 +44,7 @@ const createOrder = async function (req, res) {
         const { items, totalPrice, totalItems } = existCart
 
         if (totalItems == 0) {
-            return res.status(400).send({ status: false, msg: "cart is empty" });
+            return res.status(202).send({ status: false, msg: "Order Alredy placed from this cart Or cart is empty" });
         }
 
         let totalQuantity = items.map(x => x.quantity).reduce((a, b) => a + b);
