@@ -74,21 +74,25 @@ const createCart = async function (req, res) {
             let priceSum = isAlredyCartExists.totalPrice + (product.price * quantity)
 
             //----------------
+            
             let arr = isAlredyCartExists.items
+            
             for (i in arr) {
                 if (arr[i].productId.toString() === productId) {
                     arr[i].quantity = arr[i].quantity + quantity
 
-
+                   
                     const updatedCart = {
                         items: arr,
                         totalPrice: priceSum,
                         totalItems: arr.length
                     }
+                  
 
                     let data = await cartModel.findOneAndUpdate({ _id: isAlredyCartExists._id }, updatedCart, { new: true })
                     return res.status(201).send({ status: true, data: data })
                 }
+           
             }
 
             arr.push({ productId: productId, quantity: quantity })
@@ -191,7 +195,7 @@ const updateCart = async function (req, res) {
 
 
         let findQuantity = cart.items.find(x => x.productId.toString() === productId)
-    
+        
         if (removeProduct === 0) {
 
             let totalAmount = cart.totalPrice - (product.price * findQuantity.quantity) // substract the amount of product*quantity

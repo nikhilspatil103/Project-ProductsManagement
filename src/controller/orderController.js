@@ -158,14 +158,14 @@ const updateOrder = async function (req, res) {
         }
 
         if (orderCartid.cancellable == false) {
-
+        
             if (orderCartid.status === 'pending') {
-                if (status = 'completed') {
+                if (status === 'completed') {
                     let updatedOrder = await orderModel.findOneAndUpdate({ orderId: orderId }, { status: 'completed' }, { new: true })
                     return res.status(200).send({ status: true, msg: 'order status completed ', data: updatedOrder })
                 }
             }
-
+          
             if (orderCartid.status === 'completed') {
                 if (status === 'pending' || status === 'completed' || status === 'cancelled') {
                     return res.status(400).send({ status: false, msg: ' 3 Order status cant be changed  ' })

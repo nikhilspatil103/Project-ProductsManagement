@@ -92,11 +92,15 @@ const createProduct = async function (req, res) {
             let arr = availableSizes.split(",").map(x => x.trim())
 
             
-            const found = ["S", "XS", "M", "X", "L", "XXL", "XL"].some(r => arr.includes(r))
-
-            if (!found) {
-                return res.status(400).send({ status: false, message: `availableSizes should be among ${["S", "XS", "M", "X", "L", "XXL", "XL"].join(', ')}` })
+            for (let i = 0; i < arr.length; i++) {
+                if (!(["S", "XS", "M", "X", "L", "XXL", "XL"].includes(arr[i]))) {
+                    return res.status(400).send({ status: false, msg: 'availableSizes should be among ["S", "XS", "M", "X", "L", "XXL", "XL"]' })
+                }
             }
+
+            // if (!found) {
+            //     return res.status(400).send({ status: false, message: `availableSizes should be among ${["S", "XS", "M", "X", "L", "XXL", "XL"].join(', ')}` })
+            // }
 
             function onlyUnique(value, index, self){
                 return self.indexOf(value) === index  //value = "M" true  
@@ -310,9 +314,10 @@ const updateProduct = async function (req, res) {
         }
         if (validator.isValid(availableSizes)) {
             let arr = availableSizes.split(",").map(x => x.trim())
-            const found = ["S", "XS", "M", "X", "L", "XXL", "XL"].some(r => arr.includes(r))
-            if (!found) {
-                return res.status(400).send({ status: false, message: `availableSizes should be among ${["S", "XS", "M", "X", "L", "XXL", "XL"].join(', ')}` })
+            for (let i = 0; i < arr.length; i++) {
+                if (!(["S", "XS", "M", "X", "L", "XXL", "XL"].includes(arr[i]))) {
+                    return res.status(400).send({ status: false, msg: 'availableSizes should be among ["S", "XS", "M", "X", "L", "XXL", "XL"]' })
+                }
             }
             let data = await productModel.findOne({ _id: productId }).select({ availableSizes: 1 })
             let sizes = data.availableSizes
