@@ -57,7 +57,7 @@ const createOrder = async function (req, res) {
 
         }
 
-        if (req.body.hasOwnProperty('cancellable')) {
+        if (req.body.hasOwnProperty('cancellable')) {    //cheking the type of cancellable type 
             if (typeof (cancellable) != 'boolean') {
                 return res.status(400).send({ status: false, message: "cancellable should be Boolean value" })
             }
@@ -82,6 +82,7 @@ const updateOrder = async function (req, res) {
         let userId = req.params.userId;
         let requestBody = req.body;
         let userIdFromToken = req.userId
+
         if (!validator.isValid(userId)) {
             return res.status(400).send({ status: false, message: "Invalid request parameters. userId is required" });
         }
@@ -89,9 +90,8 @@ const updateOrder = async function (req, res) {
             return res.status(400).send({ status: false, message: "Invalid request parameters. userId is not valid" });
         }
 
-       
-
         let usercartid = await userModel.findOne({ _id: userId });
+
         if (!usercartid) {
             return res.status(400).send({ status: false, msg: "No such user found. Please register and try again" });
         }
@@ -130,10 +130,10 @@ const updateOrder = async function (req, res) {
         // pending => completed
         // completed => error mesaage
         // cancelled => error message
-        //console.log(orderCartid.cancellable)
+       
 
-        if (orderCartid.cancellable === true) {
-            if (orderCartid.status === 'pending') {
+        if (orderCartid.cancellable === true) {      //If cancellable true
+            if (orderCartid.status === 'pending') {                 // cheking status = pending
                 if (status === 'completed') {
                     let updatedOrder = await orderModel.findOneAndUpdate({ orderId: orderId }, { status: 'completed' }, { new: true })
                     return res.status(200).send({ status: true, msg: 'order status completed ', data: updatedOrder })
@@ -144,41 +144,41 @@ const updateOrder = async function (req, res) {
                 }
 
             }
-            if (orderCartid.status === 'completed') {
+            if (orderCartid.status === 'completed') {                 // cheking status = completed
                 if (status === 'pending' || status === 'completed' || status === 'cancelled') {
-                    return res.status(400).send({ status: false, msg: ' 1 Order status cant be changed  ' })
+                    return res.status(400).send({ status: false, msg: ` ${status} Order status cant be changed  ` })
                 }
             }
-            if (orderCartid.status === 'cancelled') {
+            if (orderCartid.status === 'cancelled') {                // cheking status = cancelled
                 if (status === 'pending' || status === 'completed' || status === 'cancelled') {
-                    return res.status(400).send({ status: false, msg: ' 2 Order status cant be changed ' })
+                    return res.status(400).send({ status: false, msg: `${status} Order status cant be changed`})
                 }
             }
 
         }
 
-        if (orderCartid.cancellable == false) {
+        if (orderCartid.cancellable == false) {         //If cancellable false
         
-            if (orderCartid.status === 'pending') {
+            if (orderCartid.status === 'pending') {        // cheking status = pending
                 if (status === 'completed') {
                     let updatedOrder = await orderModel.findOneAndUpdate({ orderId: orderId }, { status: 'completed' }, { new: true })
                     return res.status(200).send({ status: true, msg: 'order status completed ', data: updatedOrder })
                 }
             }
           
-            if (orderCartid.status === 'completed') {
+            if (orderCartid.status === 'completed') {         // cheking status = completed
                 if (status === 'pending' || status === 'completed' || status === 'cancelled') {
-                    return res.status(400).send({ status: false, msg: ' 3 Order status cant be changed  ' })
+                    return res.status(400).send({ status: false, msg: `${status} Order status cant be changed` })
                 }
             }
-            if (orderCartid.status === 'cancelled') {
+            if (orderCartid.status === 'cancelled') {          // cheking status = cancelled
                 if (status === 'pending' || status === 'completed' || status === 'cancelled') {
-                    return res.status(400).send({ status: false, msg: ' 4 Order status cant be changed  ' })
+                    return res.status(400).send({ status: false, msg: `${status} Order status cant be changed` })
                 }
             }
         }
 
-        return res.status(400).send({ status: false, msg: 'Order unchanged ' })
+        return res.status(400).send({ status: false, msg: `${status} Order status cant be changed` })
 
 
 
