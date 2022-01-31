@@ -66,7 +66,7 @@ const createProduct = async function (req, res) {
             }
         }
 
-       
+
         if (!(productImage && productImage.length > 0)) {
             return res.status(400).send({ status: false, msg: "Invalid request parameters. Provide productImage." });
         }
@@ -91,7 +91,7 @@ const createProduct = async function (req, res) {
         if (availableSizes) {
             let arr = availableSizes.split(",").map(x => x.trim())
 
-            
+
             for (let i = 0; i < arr.length; i++) {
                 if (!(["S", "XS", "M", "X", "L", "XXL", "XL"].includes(arr[i]))) {
                     return res.status(400).send({ status: false, msg: 'availableSizes should be among ["S", "XS", "M", "X", "L", "XXL", "XL"]' })
@@ -102,14 +102,15 @@ const createProduct = async function (req, res) {
             //     return res.status(400).send({ status: false, message: `availableSizes should be among ${["S", "XS", "M", "X", "L", "XXL", "XL"].join(', ')}` })
             // }
 
-            function onlyUnique(value, index, self){
-                return self.indexOf(value) === index  //value = "M" true  
+            // function onlyUnique(value, index, self){
+            //     return self.indexOf(value) === index  //value = "M" true  
 
-            }
-            let unique = arr.filter(onlyUnique)  //["M", "S"]
+            // }
+            // let unique = arr.filter(onlyUnique)  //["M", "S"]
+
             if (Array.isArray(arr)) {
                 if (!productData.hasOwnProperty['availableSizes']) {
-                    productData['availableSizes'] = unique
+                    productData['availableSizes'] = [...new Set(arr)]
                 }
             }
 
@@ -137,7 +138,7 @@ const getAllProducts = async function (req, res) {
 
 
             if (validator.isValid(size)) {
-                filterQuery['availableSizes'] = size  
+                filterQuery['availableSizes'] = size
             }
 
             if (validator.isValid(name)) {
@@ -157,7 +158,7 @@ const getAllProducts = async function (req, res) {
                 }
                 if (!filterQuery.hasOwnProperty('price'))
                     filterQuery['price'] = {}
-                filterQuery['price']['$gte'] = Number(priceGreaterThan)
+                filterQuery['price']['$gte'] = Number(priceGreaterThan)  //will filter greated than equal to
             }
 
             if (validator.isValid(priceLessThan)) {
@@ -170,7 +171,7 @@ const getAllProducts = async function (req, res) {
                 }
                 if (!filterQuery.hasOwnProperty('price'))
                     filterQuery['price'] = {}
-                filterQuery['price']['$lte'] = Number(priceLessThan)
+                filterQuery['price']['$lte'] = Number(priceLessThan)  //will filter less than equal to
             }
 
             if (validator.isValid(priceSort)) {
@@ -190,7 +191,7 @@ const getAllProducts = async function (req, res) {
         }
 
         const products = await productModel.find(filterQuery)
-       
+
 
 
         if (Array.isArray(products) && products.length === 0) {
@@ -261,6 +262,8 @@ const updateProduct = async function (req, res) {
         if (!product) {
             return res.status(404).send({ status: false, message: 'Product is not found' })
         }
+
+        //extract Body
         const { title, description, price, currencyId, isFreeShipping, style, availableSizes, installments } = requestBody;
 
         const updatedProductData = {}
@@ -274,11 +277,13 @@ const updateProduct = async function (req, res) {
                 updatedProductData['title'] = title
             }
         }
+
         if (validator.isValid(description)) {
             if (!updatedProductData.hasOwnProperty['description']) {
                 updatedProductData['description'] = description
             }
         }
+
         if (validator.isValid(price)) {
             if (!(!isNaN(Number(price)))) {
                 return res.status(400).send({ status: false, message: `Price should be a valid number` })
@@ -290,6 +295,7 @@ const updateProduct = async function (req, res) {
                 updatedProductData['price'] = price
             }
         }
+
         if (validator.isValid(currencyId)) {
             if (!(currencyId == "INR")) {
                 return res.status(400).send({ status: false, message: 'currencyId should be INR' })
@@ -319,17 +325,11 @@ const updateProduct = async function (req, res) {
                     return res.status(400).send({ status: false, msg: 'availableSizes should be among ["S", "XS", "M", "X", "L", "XXL", "XL"]' })
                 }
             }
-            let data = await productModel.findOne({ _id: productId }).select({ availableSizes: 1 })
-            let sizes = data.availableSizes
-            let newArr = [...arr, ...sizes] //["M", "M","S"] === self
-            function onlyUnique(value, index, self){
-                return self.indexOf(value) === index  //value = "M" true  
-
-            }
-            let unique = newArr.filter(onlyUnique)  //["M", "S"]
-            if (Array.isArray(arr)) {
-                if (!updatedProductData.hasOwnProperty['availableSizes']) {
-                    updatedProductData['availableSizes'] = unique
+     
+            if (Array.isArray(newArr)) {
+                if (!updatedProductData.hasOwnProperty(updatedProductData, '$addToSet')) {
+                    updatedProductData['$addToSet'] = {}                                    // will update unique values
+                    updatedProductData['$addToSet']['availableSizes'] =  arr 
                 }
             }
         }
@@ -353,6 +353,7 @@ const updateProduct = async function (req, res) {
             }
         }
         const updatedProduct = await productModel.findOneAndUpdate({ _id: productId }, updatedProductData, { new: true })
+       
         return res.status(200).send({ status: true, message: 'Success', data: updatedProduct });
     } catch (error) {
         return res.status(500).send({ status: false, message: error.message });
@@ -375,7 +376,9 @@ const deleteProductById = async function (req, res) {
         if (!product) {
             return res.status(404).send({ status: false, message: `product not found` })
         }
+
         await productModel.findOneAndUpdate({ _id: productId }, { $set: { isDeleted: true, deletedAt: new Date() } })
+        
         return res.status(200).send({ status: true, message: 'Successfully deleted' })
     } catch (error) {
         return res.status(500).send({ status: false, message: error.message });

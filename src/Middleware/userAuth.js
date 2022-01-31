@@ -5,10 +5,12 @@ const userAuth = async (req, res, next) => {
     try {
         const token = req.header('Authorization' , 'Bearer Token')
 
-
+        
         if(!token){
             return res.status(403).send({ status: false, message: `Missing authentication token in request` })
         }
+
+        let verifyToken = jwt.verify(token, 'project4')
        
         let x=token.split(' ')
  
@@ -16,9 +18,9 @@ const userAuth = async (req, res, next) => {
         
        
        
-        //let decoded = jwt.verify(token, 'project4')
+   
         
-        if (!timeOut) {
+        if (!verifyToken) {
             return res.status(403).send({ status: false, message: `Invalid authentication token in request ` })
         }
 

@@ -12,7 +12,7 @@ let uploadFile = async (file) => {
         // Create S3 service object
         let s3 = new aws.S3({ apiVersion: "2006-03-01" });
         var uploadParams = {
-            ACL: "public-read", // this file is publically readable
+            ACL: "public-read", // this file is publically readable       Acsess control  list
             Bucket: "classroom-training-bucket", // HERE
             Key: "Group1/" + new Date() + file.originalname, // HERE    "pk_newFolder/harry-potter.png" pk_newFolder/harry-potter.png
             Body: file.buffer,

@@ -106,7 +106,7 @@ const createCart = async function (req, res) {
             return res.status(201).send({ status: true, data: data })
 
         }
-
+       
         // TODO----------------------------create new cart
 
         let priceSum = product.price * quantity

@@ -201,8 +201,7 @@ const loginUser = async function (req, res) {
 
         const token = jwt.sign({
             userId: user._id,
-            iat: Math.floor(Date.now() / 1000),
-            exp: Math.floor(Date.now() / 1000) + 60 * 60 * 60
+             
         }, 'project 5-cart')
 
 
@@ -379,7 +378,7 @@ const updateUser = async function (req, res) {
 
         //!----------
 
-     
+        console.log(address)
         if (address) {
             let x=JSON.stringify(address)
             let y = JSON.parse(x)
