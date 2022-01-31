@@ -146,12 +146,12 @@ const updateOrder = async function (req, res) {
             }
             if (orderCartid.status === 'completed') {                 // cheking status = completed
                 if (status === 'pending' || status === 'completed' || status === 'cancelled') {
-                    return res.status(400).send({ status: false, msg: ` ${status} Order status cant be changed  ` })
+                    return res.status(400).send({ status: false, msg: ` ${status} Order status cant be changed to completed  ` })
                 }
             }
             if (orderCartid.status === 'cancelled') {                // cheking status = cancelled
                 if (status === 'pending' || status === 'completed' || status === 'cancelled') {
-                    return res.status(400).send({ status: false, msg: `${status} Order status cant be changed`})
+                    return res.status(400).send({ status: false, msg: `${status} Order status cant be changed to cancelled`})
                 }
             }
 
@@ -168,12 +168,12 @@ const updateOrder = async function (req, res) {
           
             if (orderCartid.status === 'completed') {         // cheking status = completed
                 if (status === 'pending' || status === 'completed' || status === 'cancelled') {
-                    return res.status(400).send({ status: false, msg: `${status} Order status cant be changed` })
+                    return res.status(400).send({ status: false, msg: `${status} Order status cant be changed to completed` })
                 }
             }
             if (orderCartid.status === 'cancelled') {          // cheking status = cancelled
                 if (status === 'pending' || status === 'completed' || status === 'cancelled') {
-                    return res.status(400).send({ status: false, msg: `${status} Order status cant be changed` })
+                    return res.status(400).send({ status: false, msg: `${status} Order status cant be changed to cancelled` })
                 }
             }
         }
